@@ -1,0 +1,6 @@
+[package]
+name = "wurst-jar-wrapper"
+version = "0.1.0"
+authors = ["Blake"]
+
+[dependencies]
