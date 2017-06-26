@@ -1,8 +1,24 @@
+#[macro_use]
+extern crate serde_derive;
+extern crate toml;
+
 use std::env;
+use std::fs::File;
+use std::io::Read;
 use std::path::Path;
 use std::process;
 
+
+#[derive(Deserialize)]
+struct Config {
+    initial_heap_size: Option<u32>,
+    maximum_heap_size: Option<u32>,
+    thread_stack_size: Option<u32>,
+}
+
+
 const WS_JAR: &str = "wurstscript.jar";
+
 
 fn fetch_paths_from_environment(possible_paths: &mut Vec<String>) {
     match env::var("JAVA_HOME") {
@@ -39,6 +55,36 @@ fn get_java(paths: &Vec<String>) -> String {
 }
 
 fn main() {
+    let mut java_args = String::new();
+    let _ = match File::open("wrapper_config.toml") {
+        Ok(mut file) => {
+            let mut conts = String::new();
+            file.read_to_string(&mut conts).unwrap_or(0);
+            let c: Config = match toml::from_str(&conts) {
+                Ok(f) => f,
+                _ => {
+                    println!("Found wrapper config file but unable to parse.");
+                    process::exit(1);
+                }
+            };
+
+            if let Some(init) = c.initial_heap_size {
+                java_args.push_str(&format!("-Xms{}m ", init));
+            }
+
+            if let Some(max) = c.maximum_heap_size {
+                java_args.push_str(&format!("-Xmx{}m ", max));
+            }
+
+            if let Some(stack) = c.thread_stack_size {
+                java_args.push_str(&format!("-Xss{}m ", stack));
+            }
+        },
+        _ => (),
+    };
+
+    println!("Using args {}", java_args);
+
     if !Path::new(WS_JAR).exists() {
         println!("Failed to locate {}.", WS_JAR);
         process::exit(1);
