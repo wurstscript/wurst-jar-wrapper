@@ -1,0 +1,5 @@
+# Values in MB. Comment out to use system java defaults.
+
+initial_heap_size = 512
+maximum_heap_size = 512
+# thread_stack_size = 1024
