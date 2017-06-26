@@ -21,23 +21,19 @@ const WS_JAR: &str = "wurstscript.jar";
 
 
 fn fetch_paths_from_environment(possible_paths: &mut Vec<String>) {
-    match env::var("JAVA_HOME") {
-        Ok(path) => possible_paths.push(path),
-        _ => (),
+    if let Ok(path) = env::var("JAVA_HOME") {
+        possible_paths.push(path);
     };
 
-    match env::var("PATH") {
-        Ok(vals) => {
-            let _ = vals.split(";")
-                        .filter(|&p| p.to_lowercase().contains("java"))
-                        .map(|p| possible_paths.push(p.to_owned()))
-                        .count();
-        },
-        _ => (),
+    if let Ok(vals) = env::var("PATH") {
+        let _ = vals.split(';')
+                    .filter(|&p| p.to_lowercase().contains("java"))
+                    .map(|p| possible_paths.push(p.to_owned()))
+                    .count();
     };
 }
 
-fn get_java(paths: &Vec<String>) -> String {
+fn get_java(paths: &[String]) -> String {
     for path in paths {
         let opt = format!("{}\\java.exe", path);
         if Path::new(&opt).exists() {
@@ -56,34 +52,29 @@ fn get_java(paths: &Vec<String>) -> String {
 
 fn main() {
     let mut java_args = String::new();
-    let _ = match File::open("wrapper_config.toml") {
-        Ok(mut file) => {
-            let mut conts = String::new();
-            file.read_to_string(&mut conts).unwrap_or(0);
-            let c: Config = match toml::from_str(&conts) {
-                Ok(f) => f,
-                _ => {
-                    println!("Found wrapper config file but unable to parse.");
-                    process::exit(1);
-                }
-            };
-
-            if let Some(init) = c.initial_heap_size {
-                java_args.push_str(&format!("-Xms{}m ", init));
+    if let Ok(mut file) = File::open("wrapper_config.toml") {
+        let mut conts = String::new();
+        file.read_to_string(&mut conts).unwrap_or(0);
+        let c: Config = match toml::from_str(&conts) {
+            Ok(f) => f,
+            _ => {
+                println!("Found wrapper config file but unable to parse.");
+                process::exit(1);
             }
+        };
 
-            if let Some(max) = c.maximum_heap_size {
-                java_args.push_str(&format!("-Xmx{}m ", max));
-            }
+        if let Some(init) = c.initial_heap_size {
+            java_args.push_str(&format!("-Xms{}m ", init));
+        }
 
-            if let Some(stack) = c.thread_stack_size {
-                java_args.push_str(&format!("-Xss{}m ", stack));
-            }
-        },
-        _ => (),
+        if let Some(max) = c.maximum_heap_size {
+            java_args.push_str(&format!("-Xmx{}m ", max));
+        }
+
+        if let Some(stack) = c.thread_stack_size {
+            java_args.push_str(&format!("-Xss{}m ", stack));
+        }
     };
-
-    println!("Using args {}", java_args);
 
     if !Path::new(WS_JAR).exists() {
         println!("Failed to locate {}.", WS_JAR);
