@@ -14,6 +14,7 @@ struct Config {
     initial_heap_size: Option<u32>,
     maximum_heap_size: Option<u32>,
     thread_stack_size: Option<u32>,
+    java_path:         Option<String>,
 }
 
 
@@ -51,7 +52,9 @@ fn get_java(paths: &[String]) -> String {
 }
 
 fn main() {
-    let mut java_args = String::new();
+    let mut java_args = vec!();
+    let mut java_path = String::new();
+
     if let Ok(mut file) = File::open("wrapper_config.toml") {
         let mut conts = String::new();
         file.read_to_string(&mut conts).unwrap_or(0);
@@ -64,15 +67,27 @@ fn main() {
         };
 
         if let Some(init) = c.initial_heap_size {
-            java_args.push_str(&format!("-Xms{}m ", init));
+            java_args.push(format!("-Xms{}m ", init));
         }
 
         if let Some(max) = c.maximum_heap_size {
-            java_args.push_str(&format!("-Xmx{}m ", max));
+            java_args.push(format!("-Xmx{}m ", max));
         }
 
         if let Some(stack) = c.thread_stack_size {
-            java_args.push_str(&format!("-Xss{}m ", stack));
+            java_args.push(format!("-Xss{}m ", stack));
+        }
+
+        if let Some(path) = c.java_path {
+            if let Err(_) = File::open(&path) {
+                println!("Found configured java path but file not found.  \
+                          Consider commenting out or deleting java_path from \
+                          your wrapper_config.toml to automatically detect \
+                          a java path.");
+                process::exit(1);
+            }
+
+            java_path = path;
         }
     };
 
@@ -81,21 +96,24 @@ fn main() {
         process::exit(1);
     }
 
-    let mut possible_paths: Vec<String> = vec!();
+    if java_path.is_empty() {
+        let mut possible_paths: Vec<String> = vec!();
+        fetch_paths_from_environment(&mut possible_paths);
+        java_path = get_java(&possible_paths);
+    }
 
-    fetch_paths_from_environment(&mut possible_paths);
-
-    let args = env::args().skip(1).collect::<Vec<String>>().join(" ");
-    println!("{}", args);
-
-    let java_path = get_java(&possible_paths);
+    let args = env::args().skip(1).collect::<Vec<String>>();
+    println!("Forwarded run arguments: {:?}", args);
 
     let subproc = process::Command::new(java_path).arg("-jar")
                                                   .arg(WS_JAR)
-                                                  .arg(args)
+                                                  .args(args)
+                                                  .args(java_args)
                                                   .output()
                                                   .unwrap();
     println!("{}\n\n{}",
              String::from_utf8(subproc.stdout).unwrap(),
              String::from_utf8(subproc.stderr).unwrap());
+
+    process::exit(subproc.status.code().unwrap_or(-1));
 }
