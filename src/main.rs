@@ -79,7 +79,7 @@ fn main() {
         }
 
         if let Some(path) = c.java_path {
-            if let Err(_) = File::open(&path) {
+            if File::open(&path).is_err() {
                 println!("Found configured java path but file not found.  \
                           Consider commenting out or deleting java_path from \
                           your wrapper_config.toml to automatically detect \
