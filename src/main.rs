@@ -15,6 +15,7 @@ struct Config {
     maximum_heap_size: Option<u32>,
     thread_stack_size: Option<u32>,
     java_path:         Option<String>,
+    java_args:         Option<Vec<String>>,
 }
 
 
@@ -67,15 +68,15 @@ fn main() {
         };
 
         if let Some(init) = c.initial_heap_size {
-            java_args.push(format!("-Xms{}m ", init));
+            java_args.push(format!("-Xms{}m", init));
         }
 
         if let Some(max) = c.maximum_heap_size {
-            java_args.push(format!("-Xmx{}m ", max));
+            java_args.push(format!("-Xmx{}m", max));
         }
 
         if let Some(stack) = c.thread_stack_size {
-            java_args.push(format!("-Xss{}m ", stack));
+            java_args.push(format!("-Xss{}m", stack));
         }
 
         if let Some(path) = c.java_path {
@@ -88,6 +89,10 @@ fn main() {
             }
 
             java_path = path;
+        }
+
+        if let Some(mut args) = c.java_args {
+            java_args.append(&mut args);
         }
     };
 
@@ -104,11 +109,12 @@ fn main() {
 
     let args = env::args().skip(1).collect::<Vec<String>>();
     println!("Forwarded run arguments: {:?}", args);
+    println!("Java arguments: {:?}", java_args);
 
-    let subproc = process::Command::new(java_path).arg("-jar")
+    let subproc = process::Command::new(java_path).args(java_args)
+                                                  .arg("-jar")
                                                   .arg(WS_JAR)
                                                   .args(args)
-                                                  .args(java_args)
                                                   .output()
                                                   .unwrap();
     println!("{}\n\n{}",

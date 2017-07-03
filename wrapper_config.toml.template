@@ -6,3 +6,6 @@ maximum_heap_size = 512
 
 # Comment this out to select java automatically from system environment.
 # java_path = "../java.exe"
+
+# Any further java run arguments (called before -jar).
+# java_args = ["-client", "-disablesystemassertions"]
