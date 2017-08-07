@@ -11,6 +11,6 @@ maximum_heap_size = 512
 # java_args = ["-client", "-disablesystemassertions"]
 #
 # path of folder containing wurstscript.jar
-# wurstpath = "C:\Users\YourName\.wurst\"
+# wurst_path = "C:\Users\YourName\.wurst\"
 #
 # Defaults to the location from the setup-app
