@@ -36,18 +36,18 @@ fn fetch_paths_from_environment(possible_paths: &mut Vec<String>) {
 
 fn get_java(paths: &[String]) -> String {
     for path in paths {
-        let opt = format!("{}\\java.exe", path);
+        let opt = format!("{}\\javaw.exe", path);
         if Path::new(&opt).exists() {
             return opt;
         }
 
-        let opt2 = format!("{}\\bin\\java.exe", path);
+        let opt2 = format!("{}\\bin\\javaw.exe", path);
         if Path::new(&opt2).exists() {
             return opt2;
         }
     }
 
-    println!("Failed to locate java.exe");
+    println!("Failed to locate javaw.exe");
     process::exit(1);
 }
 
