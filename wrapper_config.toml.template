@@ -1,5 +1,5 @@
-
 # Values in MB. Comment out to use system java defaults.
+
 initial_heap_size = 512
 maximum_heap_size = 512
 # thread_stack_size = 1024
@@ -10,7 +10,7 @@ maximum_heap_size = 512
 # Any further java run arguments (called before -jar).
 # java_args = ["-client", "-disablesystemassertions"]
 #
-# path of folder containing wurstscript.jar
+# Path of the folder containing the wurstscript.jar
 # wurst_path = "C:\Users\YourName\.wurst\"
 #
 # Defaults to the location from the setup-app

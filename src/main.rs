@@ -54,7 +54,7 @@ fn get_java(paths: &[String]) -> String {
 fn main() {
     let mut java_args = vec!();
     let mut java_path = String::new();
-    let mut wurst_path= String::new();
+    let mut wurst_path = String::new();
 
     if let Ok(mut file) = File::open("wrapper_config.toml") {
         let mut conts = String::new();
@@ -114,6 +114,11 @@ fn main() {
     }
 
     wurst_path = format!("{}{}", wurst_path, WS_JAR);
+
+    if File::open(&wurst_path).is_err() {
+        println!("wurstscript.jar could not be found!");
+        process::exit(1);
+    }
 
     if java_path.is_empty() {
         let mut possible_paths: Vec<String> = vec!();
