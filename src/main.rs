@@ -16,11 +16,10 @@ struct Config {
     thread_stack_size: Option<u32>,
     java_path:         Option<String>,
     java_args:         Option<Vec<String>>,
+    wurst_path:        Option<String>,
 }
 
-
 const WS_JAR: &str = "wurstscript.jar";
-
 
 fn fetch_paths_from_environment(possible_paths: &mut Vec<String>) {
     if let Ok(path) = env::var("JAVA_HOME") {
@@ -55,6 +54,7 @@ fn get_java(paths: &[String]) -> String {
 fn main() {
     let mut java_args = vec!();
     let mut java_path = String::new();
+    let mut wurst_path= String::new();
 
     if let Ok(mut file) = File::open("wrapper_config.toml") {
         let mut conts = String::new();
@@ -94,12 +94,26 @@ fn main() {
         if let Some(mut args) = c.java_args {
             java_args.append(&mut args);
         }
+
+        if let Some(path) = c.wurst_path {
+            if File::open(&path).is_err() {
+                println!("Found configured wurst path but file not found.  \
+                          Make sure the wurstscript.jar is inside the provided folder");
+                process::exit(1);
+            }
+
+            wurst_path = path;
+        }
     };
 
-    if !Path::new(WS_JAR).exists() {
-        println!("Failed to locate {}.", WS_JAR);
-        process::exit(1);
+    if wurst_path.is_empty() {
+        match env::home_dir() {
+            Some(ref p) => wurst_path = format!("{}{}", p.display(), "\\.wurst\\"),
+            None => println!("Failed to get user home")
+        }
     }
+
+    wurst_path = format!("{}{}", wurst_path, WS_JAR);
 
     if java_path.is_empty() {
         let mut possible_paths: Vec<String> = vec!();
@@ -113,7 +127,7 @@ fn main() {
 
     let subproc = process::Command::new(java_path).args(java_args)
                                                   .arg("-jar")
-                                                  .arg(WS_JAR)
+                                                  .arg(wurst_path)
                                                   .args(args)
                                                   .output()
                                                   .unwrap();
