@@ -1,0 +1,9 @@
+language: rust
+rust:
+    - nightly
+script:
+    - cargo check
+    - cargo install clippy
+    - cargo clippy
+    - time cargo build --release --verbose --all
+    - time cargo test  --release --verbose --all
