@@ -1,7 +1,7 @@
 [package]
 name    = "wurst-jar-wrapper"
-version = "0.1.2"
-authors = ["Cokemonkey11"]
+version = "0.1.3"
+authors = ["Cokemonkey11", "Frotty"]
 
 [dependencies]
 serde        = "1.0.8"
