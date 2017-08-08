@@ -1,3 +1,7 @@
+The wurst jar wrapper is a component of wurstpack (Wurstscript's fork of JNGP).
+
+[![Build Status](https://travis-ci.org/Cokemonkey11/wurst-jar-wrapper.svg?branch=master)](https://travis-ci.org/Cokemonkey11/wurst-jar-wrapper)
+
 # Test the wrapper
 
 `cargo run -- --about`
