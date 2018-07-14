@@ -1,6 +1,7 @@
 The wurst jar wrapper is a component of wurstpack (Wurstscript's fork of JNGP).
 
 [![Build Status](https://travis-ci.org/wurstscript/wurst-jar-wrapper.svg?branch=master)](https://travis-ci.org/wurstscript/wurst-jar-wrapper)
+[![CII Best Practices](https://bestpractices.coreinfrastructure.org/projects/1985/badge)](https://bestpractices.coreinfrastructure.org/projects/1985)
 
 # Test the wrapper
 
