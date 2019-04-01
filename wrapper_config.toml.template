@@ -13,4 +13,7 @@ maximum_heap_size = 512
 # Path of the folder containing the wurstscript.jar
 # wurst_path = "C:\Users\YourName\.wurst\"
 #
+# Filename for the jar to call.  Defaults to "wurstscript.jar".
+# jar_name = "wurstscript.jar"
+#
 # Defaults to the location from the setup-app
