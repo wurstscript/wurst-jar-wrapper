@@ -4,6 +4,7 @@ extern crate toml;
 
 use std::env;
 use std::fs::File;
+use std::io::BufRead;
 use std::io::Read;
 use std::path::Path;
 use std::process;
@@ -17,6 +18,7 @@ struct Config {
     java_path:         Option<String>,
     java_args:         Option<Vec<String>>,
     wurst_path:        Option<String>,
+    jar_name:          Option<String>,
 }
 
 const WS_JAR: &str = "wurstscript.jar";
@@ -56,6 +58,8 @@ fn main() {
     let mut java_path = String::new();
     let mut wurst_path = String::new();
 
+    let mut jar_name = WS_JAR.into();
+
     if let Ok(mut file) = File::open("wrapper_config.toml") {
         let mut conts = String::new();
         file.read_to_string(&mut conts).unwrap_or(0);
@@ -66,6 +70,10 @@ fn main() {
                 process::exit(1);
             }
         };
+
+        if let Some(jarname) = c.jar_name {
+            jar_name = jarname;
+        }
 
         if let Some(init) = c.initial_heap_size {
             java_args.push(format!("-Xms{}m", init));
@@ -96,9 +104,14 @@ fn main() {
         }
 
         if let Some(path) = c.wurst_path {
-            if File::open(&path).is_err() {
-                println!("Found configured wurst path but file not found.  \
-                          Make sure the wurstscript.jar is inside the provided folder");
+            let try_path = format!("{}{}", &path, jar_name);
+            if File::open(&try_path).is_err() {
+                println!(
+                    "Found configured wurst path '{}', but file not found.  \
+                    Make sure the wurstscript.jar is inside the provided \
+                    folder",
+                    try_path
+                );
                 process::exit(1);
             }
 
@@ -113,7 +126,7 @@ fn main() {
         }
     }
 
-    wurst_path = format!("{}{}", wurst_path, WS_JAR);
+    wurst_path = format!("{}{}", wurst_path, jar_name);
 
     if File::open(&wurst_path).is_err() {
         println!("wurstscript.jar could not be found!");
@@ -130,15 +143,27 @@ fn main() {
     println!("Forwarded run arguments: {:?}", args);
     println!("Java arguments: {:?}", java_args);
 
-    let subproc = process::Command::new(java_path).args(java_args)
+    let mut subproc = process::Command::new(java_path).args(java_args)
                                                   .arg("-jar")
                                                   .arg(wurst_path)
                                                   .args(args)
-                                                  .output()
-                                                  .unwrap();
-    println!("{}\n\n{}",
-             String::from_utf8(subproc.stdout).unwrap(),
-             String::from_utf8(subproc.stderr).unwrap());
+                                                  .stdout(std::process::Stdio::piped())
+                                                  .spawn()
+                                                  .expect("Failed to open a subprocess");
 
-    process::exit(subproc.status.code().unwrap_or(-1));
+    if let Some(out) = subproc.stdout.take() {
+        std::io::BufReader::new(out).lines().into_iter().for_each(|line| {
+            println!("{}", line.unwrap_or("".into()));
+        });
+    }
+
+    if let Some(err) = subproc.stderr.take() {
+        std::io::BufReader::new(err).lines().into_iter().for_each(|line| {
+            println!("{}", line.unwrap_or("".into()));
+        });
+    }
+
+    process::exit(
+        subproc.wait().expect("failed subprocess").code().unwrap_or(-1)
+    );
 }
