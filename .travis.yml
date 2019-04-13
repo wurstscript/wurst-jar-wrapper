@@ -4,6 +4,7 @@ rust:
 - stable
 
 script:
+- echo '"dummy"' > src/jar.tmp
 - cargo check
 - cargo install --force cargo-make
 - time cargo make wurstscript
