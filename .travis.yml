@@ -5,17 +5,20 @@ rust:
 
 script:
 - cargo check
-- rustup component add clippy-preview
-- cargo clippy
-- time cargo build --release --verbose --all
-- time cargo test  --release --verbose --all
+- cargo install --force cargo-make
+- time cargo make wurstscript
+- cp target/release/wurst-jar-wrapper.exe ./wurstscript.exe
+- time cargo make grill
+- cp target/release/wurst-jar-wrapper.exe ./grill.exe
 
 deploy:
   skip_cleanup: true
   provider: releases
   api_key:
     secure: NsNUCv8XJcvkZSlPbl5BTUtUzQsjvDoNMiW7rBRo4WsQw94nYthQiRel3V6twfglBHTgpzAcLo+p2vBdvV0iqLNXDLRDZVvxQcT3L6QD1+5v42I+Spdyp9RjmBu8jyegTZs0+T/ewhGWjcxQMcB1ZQNDgDuBXKnXs3n0TnRqINHR42cXpSn5OxnTLEoR/+Z+Q1I34pVtHQn5Xf0+nkoCU+nqeo27UYkX/m0DYFxgRP+E+W01y07ge2/VCRwIh2bRR3RNIOK1Us2x7aLMsZxgKkIUQQfH54+QqtUB9fEBN8Rlw4qCdEpErvKgi/e3kx0+yJd6j+6v0+SeTvC2fJMSc2sAmGffTlpS7iSZPd2gH/zOpnjb15+pEj6cSmOZjE5dldOnMRAqrSQp9172DqrzqYvhagH0kOxeG1BppUVS55IexUjqqQ1oXJdMFOoXLbeZSJijxuS1dExfFA/biavQYeG+SFYE3yRPiu/0QodwynvXtJ9JhjE9jARpTIZtWwDO2A6WSrABaytVPbg/i9lv+UItAXIszEq1O2QSOBg/lFPJSFxyOaeGhOuiDCG5MNOiZNaLWznadnFb2GvBiJ3YUJR0XoTVScn6ahKUICDJ2jQR0av9MiX8aE8Z7u0O1a8tpB3LmlH29z4vjgJeLtmSXax8nHMg6UgZa/FojjhxF7Y=
-  file: target/release/wurst-jar-wrapper.exe
+  file:
+    - wurstscript.exe
+    - grill.exe
   on:
     repo: wurstscript/wurst-jar-wrapper
     tags: true
