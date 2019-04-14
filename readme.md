@@ -1,24 +1,32 @@
-The wurst jar wrapper is a component of wurstpack (Wurstscript's fork of JNGP).
+The wurst jar wrapper is an executable that calls into java and a jar file.
+It's made to enable wurst jars to be executed from the command line on Windows platforms.
+
+At present, this is used for two purposes:
+
+- wurstscript.exe
+- grill.exe
 
 [![Build Status](https://travis-ci.org/wurstscript/wurst-jar-wrapper.svg?branch=master)](https://travis-ci.org/wurstscript/wurst-jar-wrapper)
 [![CII Best Practices](https://bestpractices.coreinfrastructure.org/projects/1985/badge)](https://bestpractices.coreinfrastructure.org/projects/1985)
 
+
 # Test the wrapper
 
-`cargo run -- --about`
+There are no tests, but `cargo run` will compile and run the wrapper.
+
 
 # Installation
 
-* `rustup default nightly`
 * `rustup update`
-* `cargo build --release`
-* `cp target/release/wurst-jar-wrapper.exe ~/workspace/WurstScript/Wurstpack/wurstscript/wurstscript.exe`
+* `cargo install --force cargo-make`
+* `cargo make wurstscript`
+* `cp target/release/wurst-jar-wrapper.exe ~/.wurst/wurstscript.exe`
+* `cargo make grill`
+* `cp target/release/wurst-jar-wrapper.exe ~/.wurst/grill.exe`
 
-# Configure
 
-* `cp wrapper_config.toml.template ~/workspace/WurstScript/Wurstpack/wurstscript/wrapper_config.toml`
-* Edit `wrapper_config.toml` to match your preferences.
+# History
 
-# Manual usage
+The wurst jar wrapper was originally a component of wurstpack (WurstScript's fork of JNGP).
 
-`wurstscript.exe ../Wurstpack/wurstscript/common.j ../Wurstpack/wurstscript/Blizzard.j ../../EBR/wurst -lib ../../StdLib2/ -lib ../../Frentity/`
+Now it is used to wrap multiple jar files.
