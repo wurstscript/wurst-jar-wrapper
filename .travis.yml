@@ -8,6 +8,7 @@ script:
 - cargo check
 - cargo install --force cargo-make
 - time cargo make wurstscript
+- ls target/release/
 - cp target/release/wurst-jar-wrapper.exe ./wurstscript.exe
 - time cargo make grill
 - cp target/release/wurst-jar-wrapper.exe ./grill.exe
