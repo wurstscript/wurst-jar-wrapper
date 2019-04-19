@@ -60,7 +60,6 @@ fn main() -> Result<(), Box<std::error::Error>> {
     };
 
     let args = env::args().skip(1).collect::<Vec<String>>();
-    println!("Forwarded run arguments: {:?}", args);
 
     let mut subproc = process::Command::new(java_path)
         .arg("-jar")
