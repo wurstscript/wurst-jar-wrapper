@@ -1,17 +1,17 @@
 [tasks.default]
 clear = true
 script = [
-    "echo '\n\nNo default task.  Try:\n  `cargo make wurstscript`, or\n  `cargo make grill`\n\n'" 
+    "echo '\n\nNo default task.  Try:\n  `cargo make wurstscript`, or\n  `cargo make grill`\n\n'"
 ]
 
 [tasks.wurstscript]
 script = [
-    "echo \\\"grill.jar\\\" > src/jar.tmp",
+    "echo \\\"wurstscript.jar\\\" > src/jar.tmp",
     "cargo build --release"
 ]
 
 [tasks.grill]
 script = [
-    "echo \\\"wurstscript.jar\\\" > src/jar.tmp",
+    "echo \\\"wurstsetup.jar\\\" > src/jar.tmp",
     "cargo build --release"
 ]
