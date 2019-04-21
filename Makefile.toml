@@ -6,12 +6,12 @@ script = [
 
 [tasks.wurstscript]
 script = [
-    "echo \\\"wurstscript.jar\\\" > src/jar.tmp",
+    'echo "wurstscript.jar" > src/jar.tmp',
     "cargo build --release"
 ]
 
 [tasks.grill]
 script = [
-    "echo \\\"wurstsetup.jar\\\" > src/jar.tmp",
+    'echo "wurstsetup.jar" > src/jar.tmp',
     "cargo build --release"
 ]

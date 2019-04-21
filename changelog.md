@@ -5,6 +5,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ## [Unreleased]
 
+## [0.3.3] - 2019-04-21
+### Fixed
+- the makefile is now executed correctly on windows cmd.exe, in addition to msys2.
+
 ## [0.3.2] - 2019-04-18
 ### Changed
 - the tool no longer prints a line saying which runargs were forwarded.
