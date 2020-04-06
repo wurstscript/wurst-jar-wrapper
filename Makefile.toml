@@ -5,13 +5,33 @@ script = [
 ]
 
 [tasks.wurstscript]
+linux_alias = "linux_wurstscript"
+windows_alias = "windows_wurstscript"
+
+[tasks.linux_wurstscript]
 script = [
     'echo "wurstscript.jar" > src/jar.tmp',
     "cargo build --release"
 ]
 
+[tasks.windows_wurstscript]
+script = [
+    "echo \\\"wurstscript.jar\\\" > src/jar.tmp",
+    "cargo build --release"
+]
+
 [tasks.grill]
+linux_alias = "linux_grill"
+windows_alias = "windows_grill"
+
+[tasks.linux_grill]
 script = [
     'echo "wurstsetup.jar" > src/jar.tmp',
+    "cargo build --release"
+]
+
+[tasks.windows_grill]
+script = [
+    "echo \\\"wurstsetup.jar\\\" > src/jar.tmp",
     "cargo build --release"
 ]
