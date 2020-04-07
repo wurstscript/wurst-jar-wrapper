@@ -9,3 +9,7 @@ script:
 - cargo install --force cargo-make
 - time cargo make wurstscript
 - time cargo make grill
+
+os:
+- windows
+- linux
