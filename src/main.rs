@@ -38,7 +38,7 @@ fn get_java(paths: &[String]) -> Result<String, ()> {
     Err(())
 }
 
-fn main() -> Result<(), Box<std::error::Error>> {
+fn main() -> Result<(), Box<dyn std::error::Error>> {
     let jar_path = format!(
         "{}{}{}",
         dirs::home_dir().expect("Failed to get user home").display(),
