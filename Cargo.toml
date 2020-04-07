@@ -1,10 +1,10 @@
 [package]
 name    = "wurst-jar-wrapper"
-version = "0.3.3"
+version = "0.3.4"
 authors = ["Cokemonkey11", "Frotty"]
 
 [dependencies]
-dirs         = "1.0.5"
-serde        = "1.0.8"
-serde_derive = "1.0.8"
-toml         = "0.4"
+dirs         = "2.0.2"
+serde        = "1.0.106"
+serde_derive = "1.0.106"
+toml         = "0.5.6"
