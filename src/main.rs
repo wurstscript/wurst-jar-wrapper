@@ -1,4 +1,3 @@
-
 use std::env;
 use std::fs::File;
 use std::io::BufRead;
@@ -48,9 +47,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     {
         // Test the file can be opened, then let it close.
-        File::open(&jar_path).expect(
-            &format!("{} could not be found!", WS_JAR)
-        );
+        File::open(&jar_path).expect(&format!("{} could not be found!", WS_JAR));
     }
 
     let java_path = {
