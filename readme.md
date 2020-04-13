@@ -32,7 +32,7 @@ The wurst jar wrapper was originally a component of wurstpack (WurstScript's for
 Now it is used to wrap multiple jar files.
 
 
-# Issues?
+# Issues? Vulnerabilites?
 
 - [Raise an issue in the github issue tracker](https://github.com/wurstscript/wurst-jar-wrapper/issues)
 - [Send an instant message on matrix.org:#wurst](https://riot.im/app/)
