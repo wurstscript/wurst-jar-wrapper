@@ -35,4 +35,4 @@ Now it is used to wrap multiple jar files.
 # Issues? Vulnerabilites?
 
 - [Raise an issue in the github issue tracker](https://github.com/wurstscript/wurst-jar-wrapper/issues)
-- [Send an instant message on matrix.org:#wurst](https://riot.im/app/)
+- [Send an instant message on matrix.org:#wurst](https://matrix.to/#/!qppIznMkBZgRaYJNYA:matrix.org?via=matrix.org)
