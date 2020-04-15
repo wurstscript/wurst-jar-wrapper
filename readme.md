@@ -30,3 +30,9 @@ There are no tests, but `cargo run` will compile and run the wrapper.
 The wurst jar wrapper was originally a component of wurstpack (WurstScript's fork of JNGP).
 
 Now it is used to wrap multiple jar files.
+
+
+# Issues? Vulnerabilites?
+
+- [Raise an issue in the github issue tracker](https://github.com/wurstscript/wurst-jar-wrapper/issues)
+- [Send an instant message on matrix.org:#wurst](https://matrix.to/#/!qppIznMkBZgRaYJNYA:matrix.org?via=matrix.org)
