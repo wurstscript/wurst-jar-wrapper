@@ -2,9 +2,11 @@
 name    = "wurst-jar-wrapper"
 version = "0.3.4"
 authors = ["Cokemonkey11", "Frotty"]
+edition = "2018"
 
 [dependencies]
 dirs         = "2.0.2"
 serde        = "1.0.106"
 serde_derive = "1.0.106"
 toml         = "0.5.6"
+which = "6.0.3"

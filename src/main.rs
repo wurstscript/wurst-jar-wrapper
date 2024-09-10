@@ -3,6 +3,7 @@ use std::fs::File;
 use std::io::BufRead;
 use std::path::Path;
 use std::process;
+use which::which;
 
 // This file is build by the makefile using cargo-make.
 const WS_JAR: &str = include!("jar.tmp");
@@ -12,13 +13,10 @@ fn fetch_paths_from_environment(possible_paths: &mut Vec<String>) {
         possible_paths.push(path);
     };
 
-    if let Ok(vals) = env::var("PATH") {
-        let _ = vals
-            .split(';')
-            .filter(|&p| p.to_lowercase().contains("java"))
-            .map(|p| possible_paths.push(p.to_owned()))
-            .count();
-    };
+    if let Ok(path) = which("java") {
+        let dir = path.parent().unwrap();
+        possible_paths.push(format!("{}", dir.display()));
+    }
 }
 
 fn get_java(paths: &[String]) -> Result<String, ()> {
