@@ -1,57 +1,56 @@
 use std::env;
 use std::fs::File;
 use std::io::BufRead;
-use std::path::Path;
+use std::path::PathBuf;
 use std::process;
+
+use eyre::{eyre, Context};
 use which::which;
 
-// This file is build by the makefile using cargo-make.
+// This file is built by the makefile using cargo-make.
 const WS_JAR: &str = include!("jar.tmp");
 
-fn fetch_paths_from_environment(possible_paths: &mut Vec<String>) {
-    if let Ok(path) = env::var("JAVA_HOME") {
-        possible_paths.push(path);
-    };
-
-    if let Ok(path) = which("java") {
-        let dir = path.parent().unwrap();
-        possible_paths.push(format!("{}", dir.display()));
-    }
+fn fetch_java_paths_from_environment() -> Vec<PathBuf> {
+    env::var("JAVA_HOME")
+        .into_iter()
+        .map(PathBuf::from)
+        .chain(
+            which("java")
+                .into_iter()
+                .flat_map(|dir| dir.parent().map(|path| path.to_path_buf())),
+        )
+        .collect()
 }
 
-fn get_java(paths: &[String]) -> Result<String, ()> {
-    for path in paths {
-        let opt = format!("{}\\javaw.exe", path);
-        if Path::new(&opt).exists() {
-            return Ok(opt);
-        }
-
-        let opt2 = format!("{}\\bin\\javaw.exe", path);
-        if Path::new(&opt2).exists() {
-            return Ok(opt2);
-        }
-    }
-
-    Err(())
+fn get_java_exe_from_java_dirs(paths: &[PathBuf]) -> eyre::Result<PathBuf> {
+    paths
+        .iter()
+        .flat_map(|path| [path.join("javaw.exe"), path.join("bin").join("javaw.exe")].into_iter())
+        .find(|path| path.exists())
+        .ok_or(eyre!(
+            "Couldn't find a javaw.exe in JAVA_HOME or in the directory obtained with `which java`"
+        ))
 }
 
-fn main() -> Result<(), Box<dyn std::error::Error>> {
-    let jar_path = format!(
-        "{}{}{}",
-        dirs::home_dir().expect("Failed to get user home").display(),
-        "\\.wurst\\",
-        WS_JAR
-    );
+fn main() -> eyre::Result<()> {
+    let jar_path = dirs::home_dir()
+        .expect("Failed to get user home")
+        .join(".wurst")
+        .join(WS_JAR);
 
     {
         // Test the file can be opened, then let it close.
-        File::open(&jar_path).expect(&format!("{} could not be found!", WS_JAR));
+        File::open(&jar_path).with_context(|| {
+            format!(
+                "Tried to open the configured jar path ({:?}) but it failed!",
+                jar_path
+            )
+        })?;
     }
 
     let java_path = {
-        let mut possible_paths: Vec<String> = vec![];
-        fetch_paths_from_environment(&mut possible_paths);
-        get_java(&possible_paths).expect("Failed to locate javaw.exe")
+        let possible_paths = fetch_java_paths_from_environment();
+        get_java_exe_from_java_dirs(&possible_paths)?
     };
 
     let args = env::args().skip(1).collect::<Vec<String>>();
@@ -61,32 +60,21 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         .arg(jar_path)
         .args(args)
         .stdout(std::process::Stdio::piped())
-        .spawn()
-        .expect("Failed to open a subprocess");
+        .spawn()?;
 
     if let Some(out) = subproc.stdout.take() {
-        std::io::BufReader::new(out)
-            .lines()
-            .into_iter()
-            .for_each(|line| {
-                println!("{}", line.unwrap_or("".into()));
-            });
+        std::io::BufReader::new(out).lines().for_each(|line| {
+            println!("{}", line.unwrap_or_else(|err| err.to_string()));
+        });
     }
 
     if let Some(err) = subproc.stderr.take() {
-        std::io::BufReader::new(err)
-            .lines()
-            .into_iter()
-            .for_each(|line| {
-                println!("{}", line.unwrap_or("".into()));
-            });
+        std::io::BufReader::new(err).lines().for_each(|line| {
+            println!("{}", line.unwrap_or_else(|err| err.to_string()));
+        });
     }
 
-    process::exit(
-        subproc
-            .wait()
-            .expect("failed subprocess")
-            .code()
-            .unwrap_or(-1),
-    );
+    process::exit(subproc.wait()?.code().ok_or_else(|| {
+        eyre!("Failed to read the exit code of subprocess - was it masked by a signal handler?")
+    })?)
 }

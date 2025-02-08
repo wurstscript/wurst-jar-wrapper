@@ -1,12 +1,13 @@
 [package]
-name    = "wurst-jar-wrapper"
-version = "0.3.4"
+name = "wurst-jar-wrapper"
+version = "0.4.0"
 authors = ["Cokemonkey11", "Frotty"]
-edition = "2018"
+edition = "2021"
+license = "MIT OR Apache-2.0"
 
 [dependencies]
-dirs         = "2.0.2"
-serde        = "1.0.106"
-serde_derive = "1.0.106"
-toml         = "0.5.6"
-which = "6.0.3"
+dirs = "6.0"
+eyre = "0.6"
+serde = { version = "1.0", features = ["derive"] }
+toml = "0.8"
+which = "7.0"
