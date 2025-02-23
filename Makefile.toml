@@ -35,3 +35,17 @@ script = [
     "echo \\\"wurstsetup.jar\\\" > src/jar.tmp",
     "cargo build --release"
 ]
+
+# Cross-compilation
+
+[tasks.wurstscript_for_windows_from_linux_crosscompile]
+script = [
+    "echo \\\"wurstscript.jar\\\" > src/jar.tmp",
+    "cargo build --release --target x86_64-pc-windows-gnu"
+]
+
+[tasks.grill_for_windows_from_linux_crosscompile]
+script = [
+    "echo \\\"wurstsetup.jar\\\" > src/jar.tmp",
+    "cargo build --release --target x86_64-pc-windows-gnu"
+]
